@@ -1,0 +1,35 @@
+{
+  "name": "plurk-css-editor-mod",
+  "version": "0.1.0",
+  "description": "Bundled Monaco editor and LESS compiler for Plurk CSS integrated editor userscript",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "http-server ./ -a \"127.0.0.1\""
+  },
+  "author": "Jeremy Lam \"JLChnToZ\"",
+  "license": "MIT",
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.4.0",
+    "http-server": "^0.10.0",
+    "ignore-loader": "^0.1.2",
+    "prepack-webpack-plugin": "^1.1.0",
+    "source-map-loader": "^0.2.3",
+    "typescript": "^2.6.1",
+    "webpack": "^3.8.1",
+    "worker-loader": "^1.1.0"
+  },
+  "dependencies": {
+    "@types/less": "0.0.32",
+    "@types/react": "^16.0.25",
+    "@types/react-dom": "^16.0.3",
+    "@types/react-monaco-editor": "^0.10.0",
+    "clean-css": "^4.1.9",
+    "less": "^2.7.3",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1",
+    "react-monaco-editor": "^0.12.0",
+    "sass.js": "^0.10.7",
+    "typestyle": "^1.5.1"
+  }
+}
