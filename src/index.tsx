@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 import MonacoEditor from 'react-monaco-editor';
+import { messages } from './i18n';
 import './monaco-worker-proxy-factory';
 import './style-injector';
 import {
@@ -11,6 +12,7 @@ import {
   getIsCompiling,
   getMode,
   setMode,
+  setLangMessage,
   load,
   compile
 } from './converter';
@@ -27,6 +29,8 @@ const langList: any = {
 };
 const langMatch = langList[document.documentElement.lang];
 const lang = langMatch ? { availableLanguages: { '*': langMatch } } : {};
+const message = messages[document.documentElement.lang] || messages.en;
+setLangMessage(message);
 
 class App extends React.Component<any, any> {
   constructor(props: any) {
@@ -96,12 +100,12 @@ function onMount(editor: monaco.editor.IStandaloneCodeEditor, Monaco: typeof mon
   registerUpdateMarkers(markers => Monaco.editor.setModelMarkers(editorModel, 'compiler', markers));
   editor.addAction({
     id:'mode-less',
-    label: '切換至 LESS 編輯器',
+    label: message.mode_less,
     run() { switchLanguage('less'); }
   });
   editor.addAction({
     id:'mode-scss',
-    label: '切換至 SCSS 編輯器',
+    label: message.mode_scss,
     run() { switchLanguage('scss'); }
   });
 
@@ -116,7 +120,7 @@ function onMount(editor: monaco.editor.IStandaloneCodeEditor, Monaco: typeof mon
   
   function updateStatus(modeChanged: boolean) {
     const mode = getMode();
-    overlayWidget.getDomNode().textContent = `${mode} 模式 (可按一下 F1 在命令列切換) ${getIsCompiling() ? ', 處理中...' : ''}`;
+    overlayWidget.getDomNode().textContent = mode + (getIsCompiling() ? ', ' + message.processing : '');
     if(modeChanged) Monaco.editor.setModelLanguage(editorModel, mode);
   }
 }

@@ -49,7 +49,7 @@ async function compile(token: number, src: string, mode: string) {
       case 'less': rendered = (await less.render(src)).css; break;
       case 'sass': case 'scss': rendered = await new Promise<string>((resolve, reject) => {
         Sass.options({ indentedSyntax: mode === 'sass' });
-        Sass.compile(src, (result: any) => {
+        Sass.compile(src, result => {
           if(result.status > 0)
             return reject({
               message: result.message,

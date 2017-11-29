@@ -9,7 +9,8 @@ let mode: string = '',
   newValue: string = '',
   updateStatus: (modeChanged: boolean) => void,
   updateCompiledData: (value: string) => void,
-  updateMarkers: (markers: monaco.editor.IMarkerData[]) => void;
+  updateMarkers: (markers: monaco.editor.IMarkerData[]) => void,
+  message: any;
 
 export function registerUpdateStatus(fn: (changed: boolean) => void) {
   if(fn) updateStatus = fn;
@@ -30,6 +31,10 @@ export function setMode(newMode: string, value: string, forceChange: boolean = f
   mode = newMode;
   updateStatus(true);
   compile(value);
+}
+
+export function setLangMessage(i18nMessage: any) {
+  if(i18nMessage) message = i18nMessage;
 }
 
 export function load(value: string) {
@@ -68,8 +73,7 @@ async function delayCompile(): Promise<void> {
 
     const footer = `
 
-/** 警告！修改或刪除這個訊息後面的內容將會導致未經預處理的 CSS (LESS/SCSS) 原始碼損毀甚至丟失。
---預處理代碼區段開始-- **/
+/** ${message.srcwarn} **/
 /*${mode}.source::${saveEscape(valueToProcess)}*/`;
     updateCompiledData(footer);
     const formatted: string = (await sendToWorker('compile', { mode, content: valueToProcess }));
