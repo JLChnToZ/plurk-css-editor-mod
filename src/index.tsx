@@ -69,7 +69,7 @@ const overlayWidget: monaco.editor.IOverlayWidget & { domNode: HTMLElement | nul
   domNode: null,
   getId() { return 'mode.display.widget'; },
   getDomNode() {
-    if (!this.domNode) {
+    if(!this.domNode) {
       this.domNode = document.createElement('h2');
       this.domNode.id = 'custom_css_mode';
     }
@@ -120,7 +120,7 @@ function onMount(editor: monaco.editor.IStandaloneCodeEditor, Monaco: typeof mon
   
   function updateStatus(modeChanged: boolean) {
     const mode = getMode();
-    overlayWidget.getDomNode().textContent = mode + (getIsCompiling() ? ', ' + message.processing : '');
+    overlayWidget.getDomNode().textContent = message.mode_hint.replace('%s', mode) + (getIsCompiling() ? ' - ' + message.processing : '');
     if(modeChanged) Monaco.editor.setModelLanguage(editorModel, mode);
   }
 }
