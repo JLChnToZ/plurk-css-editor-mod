@@ -182,6 +182,10 @@ declare class CleanCSS {
     sources: string | string[] | CleanCSS.MultipleFileInputs,
     callback?: (error: any, minified: CleanCSS.Output) => void
   ): CleanCSS.Output | Promise<CleanCSS.Output>;
+  minify(
+    source: string, inputSourceMap: any,
+    callback?: (error: any, minified: CleanCSS.Output) => void
+  ): CleanCSS.Output | Promise<CleanCSS.Output>;
 }
 
 export = CleanCSS;

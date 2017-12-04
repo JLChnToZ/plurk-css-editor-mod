@@ -38,31 +38,35 @@ ctx.addEventListener('message', (event) => {
 const cleanCss = new CleanCss({
   format: 'beautify',
   inline: false,
+  sourceMap: true,
   returnPromise: true,
   level: { 2: { all: true } }
 });
 
 async function compile(token: number, src: string, mode: string) {
-  let rendered: string;
+  let rendered: string, sourceMap: any;
   try {
     switch(mode) {
-      case 'less': rendered = (await less.render(src)).css; break;
-      case 'sass': case 'scss': rendered = await new Promise<string>((resolve, reject) => {
-        Sass.options({ indentedSyntax: mode === 'sass' });
-        Sass.compile(src, result => {
-          if(result.status > 0)
-            return reject({
-              message: result.message,
-              line: result.line,
-              column: result.column,
-              formatted: result.formatted
-            });
-          return resolve(result.text);
+      case 'less':
+        const lessResult = await less.render(src);
+        rendered = lessResult.css;
+        sourceMap = lessResult.map;
+        break;
+      case 'sass': case 'scss':
+        const sassResult = await new Promise<Sass.SassResponse>((resolve, reject) => {
+          Sass.options({ indentedSyntax: mode === 'sass' });
+          Sass.compile(src, result => {
+            if(result.status > 0)
+              return reject(result);
+            return resolve(result);
+          });
         });
-      }); break;
+        rendered = sassResult.text as string;
+        sourceMap = sassResult.map;
+        break;
       default: rendered = src; break;
     }
-    const formatted = await cleanCss.minify(rendered);
+    const formatted = await cleanCss.minify(rendered, sourceMap);
     rendered = formatted.styles || '';
     ctx.postMessage({ token, content: rendered });  
   } catch(e) {

@@ -9,10 +9,13 @@ cssRaw(`#custom_css {
   position: relative;
   border: solid 1px #DDD;
 }
-#custom_css_mode {
+#custom_css_mode, #custom_css_editor div {
   -webkit-user-select: none;
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+#custom_css_mode {
   background-color: rgba(255, 255, 255, 0.5);
+  padding: 0.1em;
 }`);
