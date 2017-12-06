@@ -18,14 +18,17 @@ if(!('window' in self)) {
       },
       createElement: () => fakeElement,
       createTextNode: noop
-    }, location: {}
+    }, location: {},
+    XMLHttpRequest
   };
   (self as any).document = window.document;
+  (self as any).XMLHttpRequest = XMLHttpRequest;
 }
 
 import * as less from 'less';
 import * as CleanCss from 'clean-css';
 import * as Sass from 'sass.js';
+import { delayTimeout } from './promise-helper';
 
 const ctx: Worker = self as any;
 
@@ -48,19 +51,25 @@ async function compile(token: number, src: string, mode: string) {
   try {
     switch(mode) {
       case 'less':
-        const lessResult = await less.render(src);
+        const lessResult = await Promise.race([
+          less.render(src),
+          delayTimeout<Less.RenderOutput>(5000, 'Less render timeout')
+        ]);
         rendered = lessResult.css;
         sourceMap = lessResult.map;
         break;
       case 'sass': case 'scss':
-        const sassResult = await new Promise<Sass.SassResponse>((resolve, reject) => {
-          Sass.options({ indentedSyntax: mode === 'sass' });
-          Sass.compile(src, result => {
-            if(result.status > 0)
-              return reject(result);
-            return resolve(result);
-          });
-        });
+        const sassResult = await Promise.race([
+          new Promise<Sass.SassResponse>((resolve, reject) => {
+            Sass.options({ indentedSyntax: mode === 'sass' });
+            Sass.compile(src, result => {
+              if(result.status > 0)
+                return reject(result);
+              return resolve(result);
+            });
+          }),
+          delayTimeout<Sass.SassResponse>(5000, 'Sass compile timeout')
+        ]);
         rendered = sassResult.text as string;
         sourceMap = sassResult.map;
         break;
@@ -82,7 +91,10 @@ function wrapError(e: any) {
     wrapped.stack = stack;
     return wrapped;
   }
-  return { stack: new Error().stack, message: e };
+  return {
+    stack: new Error(e && e.toString()).stack,
+    message: e
+  };
 }
 
 function noop() {}

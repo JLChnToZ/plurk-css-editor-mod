@@ -3,7 +3,7 @@ import { delay, getToken, saveEscape, saveUnescape } from './utils';
 const CompileWorker = require('worker-loader?inline=true&fallback=false!./converter.worker');
 
 export class Converter {
-  static message: any;
+  message: any;
   worker: Worker;
   mode: string;
   isCompiling: boolean;
@@ -19,13 +19,14 @@ export class Converter {
   updateCompiledData: (value: string) => void;
   updateMarkers: (markers: monaco.editor.IMarkerData[]) => void;
 
-  constructor() {
+  constructor(message: any) {
     this.worker = new CompileWorker();
     this.mode = '';
     this.isCompiling = false;
     this.newValue = '';
     this.handles = {};
     this.token = 0;
+    this.message = message;
     
     this.worker.addEventListener('message', this.receiveFromWorker.bind(this));
   }
@@ -38,10 +39,11 @@ export class Converter {
   }
 
   load(value: string) {
-    const matches = /\/\*(less|s[ac]ss)\.source::([A-Za-z0-9+\/]+={0,2})\*\//.exec(value);
+    const matches = /\/\*(less|s[ac]ss)\.source::(?:=lz85([0-9A-Za-z!#$%&()*+;<=>?@^_`{|}~-]+)|([0-9A-Za-z+\/]+={0,2}))\*\//.exec(value);
     if(matches) {
-      this.setMode(matches[1], saveUnescape(matches[2]), true);
-      return saveUnescape(matches[2]);
+      const unescaped = matches[2] ? saveUnescape(matches[2], 1) : saveUnescape(matches[3]);
+      this.setMode(matches[1], unescaped, true);
+      return unescaped;
     }
     this.setMode('less', value, true);
     return value;
@@ -67,7 +69,7 @@ export class Converter {
       if(!valueToProcess.replace(/^\s+|\s+$/g, '').length)
         return this.updateCompiledData('');
   
-      const footer = `\n\n/** ${Converter.message.srcwarn} **/\n/*${this.mode}.source::${saveEscape(valueToProcess)}*/`;
+      const footer = `\n\n/** ${this.message.srcwarn} **/\n/*${this.mode}.source::=lz85${saveEscape(valueToProcess, 1)}*/`;
       this.updateCompiledData(footer);
       const formatted: string = (await this.sendToWorker('compile', { mode: this.mode, content: valueToProcess }));
       this.updateCompiledData(formatted + footer);

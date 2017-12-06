@@ -77,7 +77,7 @@ export class CSSEditor extends React.Component<CSSEditorOptions, any> {
   
     const originalEditor = this.originalEditor;
     const message = this.message;
-    const converter = new Converter();
+    const converter = new Converter(message);
     const editorModel = editor.getModel();
     editorModel.updateOptions({
       insertSpaces: true,
