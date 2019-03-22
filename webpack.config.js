@@ -1,12 +1,13 @@
 const webpack = require('webpack');
-const PrepackWebpackPlugin = require('prepack-webpack-plugin').default;
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: './src/index.ts',
   output: {
-    filename: 'bundle.js',
-    path: __dirname + '/dist'
+    filename: 'plurkcss-editor.js',
+    path: __dirname + '/dist',
+    publicPath: 'https://moka-rin.moe/misc/plurkcss/',
   },
 
   // Enable sourcemaps for debugging webpack's output.
@@ -14,7 +15,7 @@ module.exports = {
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: ['.ts', '.tsx', '.js', '.json']
+    extensions: ['.ts', '.tsx', '.js', '.json'],
   },
 
   module: {
@@ -26,7 +27,22 @@ module.exports = {
   },
 
   node: {
-    fs: 'empty'
+    fs: 'empty',
+  },
+
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        uglifyOptions: {
+          compress: false,
+          ecma: 6,
+          mangle: true,
+        },
+        sourceMap: true,
+      })
+    ],
   },
 
   plugins: [
@@ -36,18 +52,5 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        drop_console: false
-      }
-    }),
-    /*new PrepackWebpackPlugin({
-      prepack: {
-        speculate: true,
-        trace: true,
-        singlePass: true
-      }
-    }),*/
   ]
 };

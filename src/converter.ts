@@ -1,5 +1,4 @@
-'use strict';
-import * as monaco from 'monaco-editor';
+import { editor as MonacoEditor, MarkerSeverity } from 'monaco-editor';
 import { delay, getToken, saveEscape, saveUnescape } from './utils';
 const CompileWorker = require('worker-loader?inline=true&fallback=false!./converter.worker');
 
@@ -16,9 +15,6 @@ export class Converter {
       reject: (reason: any) => void
     }
   };
-  updateStatus?: (modeChanged: boolean) => void;
-  updateCompiledData?: (value: string) => void;
-  updateMarkers?: (markers: monaco.editor.IMarkerData[]) => void;
 
   constructor(message: any) {
     this.worker = new CompileWorker();
@@ -32,7 +28,7 @@ export class Converter {
     this.worker.addEventListener('message', this.receiveFromWorker.bind(this));
   }
 
-  setMode(newMode: string, value: string, forceChange: boolean = false) {
+  setMode(newMode: string, value: string) {
     if(this.mode === newMode) return;
     this.mode = newMode;
     this.updateStatus!(true);
@@ -43,10 +39,10 @@ export class Converter {
     const matches = /\/\*(less|s[ac]ss)\.source::(?:=lz85([0-9A-Za-z!#$%&()*+;<=>?@^_`{|}~-]+)|([0-9A-Za-z+\/]+={0,2}))\*\//.exec(value);
     if(matches) {
       const unescaped = matches[2] ? saveUnescape(matches[2], 1) : saveUnescape(matches[3]);
-      this.setMode(matches[1], unescaped, true);
+      this.setMode(matches[1], unescaped);
       return unescaped;
     }
-    this.setMode('less', value, true);
+    this.setMode('less', value);
     return value;
   }
 
@@ -81,7 +77,7 @@ export class Converter {
           startColumn: e.column as number, endColumn: e.column as number,
           startLineNumber: e.line as number, endLineNumber: e.line as number,
           message: e.message as string,
-          severity: monaco.MarkerSeverity.Error
+          severity: MarkerSeverity.Error,
         }]);
       }
     } finally {
@@ -109,4 +105,8 @@ export class Converter {
     else handle.resolve(e.data.content);
     delete this.handles[e.data.token];
   }
+  
+  updateStatus(_: boolean) {}
+  updateCompiledData(_: string) {}
+  updateMarkers(_: MonacoEditor.IMarkerData[]) {}
 }

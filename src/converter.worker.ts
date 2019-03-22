@@ -1,38 +1,12 @@
-'use strict';
-if(!('window' in self)) {
-  // Stub of shimmed window global object for hacking to make LESS.js to work
-  const fakeElement = {
-    dataset: {},
-    rel: '',
-    appendChild: noop,
-    removeChild: noop
-  };
-  const window = (self as any).window = {
-    document: {
-      getElementsByTagName(tagName: string) {
-        switch(tagName) {
-          case 'script': case 'style':
-          case 'link': case 'head':
-            return [fakeElement];
-        }
-      },
-      createElement: () => fakeElement,
-      createTextNode: noop
-    }, location: {},
-    XMLHttpRequest
-  };
-  (self as any).document = window.document;
-  (self as any).XMLHttpRequest = XMLHttpRequest;
-}
-
+import './worker-dom-shim';
 import * as less from 'less';
 import * as CleanCss from 'clean-css';
 import * as Sass from 'sass.js';
 import { delayTimeout } from './promise-helper';
 
-const ctx: Worker = self as any;
+declare const self: Worker;
 
-ctx.addEventListener('message', (event) => {
+self.addEventListener('message', (event) => {
   switch(event.data.type) {
     case 'compile': return compile(event.data.token, event.data.content, event.data.mode);
   }
@@ -77,9 +51,9 @@ async function compile(token: number, src: string, mode: string) {
     }
     const formatted = await cleanCss.minify(rendered, sourceMap);
     rendered = formatted.styles || '';
-    ctx.postMessage({ token, content: rendered });  
+    self.postMessage({ token, content: rendered });  
   } catch(e) {
-    ctx.postMessage({ token, content: '', error: wrapError(e) });
+    self.postMessage({ token, content: '', error: wrapError(e) });
   }
 }
 
@@ -96,5 +70,3 @@ function wrapError(e: any) {
     message: e
   };
 }
-
-function noop() {}

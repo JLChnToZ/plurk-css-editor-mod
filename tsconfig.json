@@ -5,11 +5,11 @@
     "noImplicitAny": true,
     "module": "commonjs",
     "target": "es5",
-    "jsx": "react",
     "strict": true,
     "lib": ["dom", "webworker", "es5", "es6"],
     "typeRoots": ["node_modules/@types"],
     "baseUrl": ".",
+    "importHelpers": true,
     "paths" :{
       "*": ["typings/*"]
     }

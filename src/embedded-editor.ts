@@ -1,10 +1,10 @@
+import { editor as MonacoEditor } from 'monaco-editor';
 import { messages } from './i18n';
-import * as monaco from 'monaco-editor'
 import { Converter } from './converter';
 
 type HTMLValueElement = HTMLElement & { value: string };
 
-interface IDomOverlayWidget extends monaco.editor.IOverlayWidget {
+interface IDomOverlayWidget extends MonacoEditor.IOverlayWidget {
   domNode?: HTMLElement;
 }
 
@@ -16,7 +16,7 @@ const overlayWidget: IDomOverlayWidget = {
   getDomNode() {
     if(!this.domNode) {
       this.domNode = document.createElement('h2');
-      this.domNode.id = 'custom_css_mode';
+      this.domNode.id = 'custom-css-mode';
     }
     return this.domNode;
   },
@@ -28,9 +28,10 @@ export class EmbeddedEditor {
   originalEditor?: HTMLValueElement;
   overlayWidget?: IDomOverlayWidget;
   observer: MutationObserver;
-  editor?: monaco.editor.IStandaloneCodeEditor;
-  model?: monaco.editor.ITextModel;
+  editor?: MonacoEditor.IStandaloneCodeEditor;
+  model?: MonacoEditor.ITextModel;
   converter: Converter;
+  value?: string;
 
   constructor(query: string) {
     this.query = query;
@@ -40,11 +41,13 @@ export class EmbeddedEditor {
     this.converter.updateMarkers = this.onMarkersUpdate.bind(this);
     this.converter.updateStatus = this.onStatusUpdate.bind(this);
     this.onDidChangeContent = this.onDidChangeContent.bind(this);
+    this.onSourceChange = this.onSourceChange.bind(this);
     this.observer = new MutationObserver(this.onMutate.bind(this));
     this.observer.observe(document.body, {
       childList: true,
       subtree: true,
     });
+    this.onMutate();
   }
 
   onMutate() {
@@ -52,9 +55,11 @@ export class EmbeddedEditor {
     if(element) {
       if(this.originalEditor) return;
       this.originalEditor = element as HTMLValueElement;
+      this.originalEditor.addEventListener('change', this.onSourceChange);
       this.onAppear(this.originalEditor);
     } else {
       if(!this.originalEditor) return;
+      this.originalEditor.removeEventListener('change', this.onSourceChange);
       delete this.originalEditor;
       this.onDisappear();
     }
@@ -65,11 +70,12 @@ export class EmbeddedEditor {
       document.createElement('div'),
       element.nextElementSibling,
     );
-    root.id = 'custom_css_editor';
+    root.id = 'custom-css-editor';
     this.overlayWidget = Object.create(overlayWidget);
-    this.editor = monaco.editor.create(root, {
+    this.value = element.value;
+    this.editor = MonacoEditor.create(root, {
       language: 'less',
-      value: element.value,
+      value: this.value,
       theme: 'vs',
       selectOnLineNumbers: true,
       wordWrap: 'on',
@@ -86,14 +92,19 @@ export class EmbeddedEditor {
     this.editor.addAction({
       id:'mode-less',
       label: message.mode_less,
-      run: this.switchLanguage.bind(this, 'less', false),
+      run: this.switchLanguage.bind(this, 'less'),
     });
     this.editor.addAction({
       id:'mode-scss',
       label: message.mode_scss,
-      run: this.switchLanguage.bind(this, 'scss', false),
+      run: this.switchLanguage.bind(this, 'scss'),
     });
-    this.editor.setValue(this.converter.load(element.value));
+    this.reloadvalue();
+  }
+
+  reloadvalue() {
+    if(this.value && this.editor)
+      this.editor.setValue(this.converter.load(this.value));
   }
 
   onDisappear() {
@@ -110,12 +121,12 @@ export class EmbeddedEditor {
 
   onUpdateCompiledData(value: string) {
     if(this.originalEditor)
-      this.originalEditor.value = value;
+      this.originalEditor.value = this.value = value;
   }
 
-  onMarkersUpdate(markers: monaco.editor.IMarkerData[]) {
+  onMarkersUpdate(markers: MonacoEditor.IMarkerData[]) {
     if(this.model)
-      monaco.editor.setModelMarkers(this.model, 'compiler', markers);
+      MonacoEditor.setModelMarkers(this.model, 'compiler', markers);
   }
 
   onStatusUpdate(modeChanged: boolean) {
@@ -125,16 +136,24 @@ export class EmbeddedEditor {
         message.mode_hint.replace('%s', mode) +
         (this.converter.isCompiling ? ' - ' + message.processing : '');
     if(modeChanged && this.model)
-      monaco.editor.setModelLanguage(this.model, mode);
+      MonacoEditor.setModelLanguage(this.model, mode);
   }
 
   onDidChangeContent() {
     if(this.model)
       this.converter.compile(this.model.getValue());
   }
+
+  onSourceChange(e: Event) {
+    const newValue = (e.target as HTMLValueElement).value;
+    if(newValue !== this.value) {
+      this.value = newValue;
+      this.reloadvalue();
+    }
+  }
   
-  switchLanguage(lang: string, force = false) {
+  switchLanguage(lang: string) {
     if(this.model)
-      this.converter.setMode(lang, this.model.getValue(), force);
+      this.converter.setMode(lang, this.model.getValue());
   }
 }

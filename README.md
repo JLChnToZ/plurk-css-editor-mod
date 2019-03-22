@@ -7,39 +7,11 @@ This is the mod that replaces [Plurk](https://www.plurk.com) custom CSS text fie
 ## Building and Usage
 
 ```sh
-$ npm i && npm run build
+$ yarn && yarn build
 ```
 Then it will generate bundle.js inside dist folder. Just make this file injected into theme settings page and you will see the result.
 
-This repository just contains the content inside the mod main bundle. To make this run, you will have to inject the bundled script into the settings page. There are many ways to do this, but I think the easiest way is create a UserScript loaded with GreaseMonkey or TamperMonkey. Here is the sample UserScript for injection:
-
-```javascript
-// ==UserScript==
-// @name         Plurk CSS Monaco Editor
-// @namespace    https://moka-rin.moe/plurkcss
-// @version      0.5.1
-// @description  Change the custom CSS box into Monaco Editor with LESS/SCSS support
-// @author       JLChnToZ
-// @match        http://www.plurk.com/Settings/show?page=theme
-// @match        https://www.plurk.com/Settings/show?page=theme
-// @grant        none
-// ==/UserScript==
-// jshint multistr: true
-
-(function() {
-  'use strict';
-  var head = document.getElementsByTagName('head')[0];
-
-  function loadScript(src) {
-    var script = document.createElement('script');
-    script.src = src;
-    head.appendChild(script);
-    return script;
-  }
-
-  loadScript('https://moka-rin.moe/misc/plurkcss_inject.js');
-})();
-```
+This repository just contains the content inside the mod main bundle. To make this run, you will have to inject the bundled script into the settings page. There are many ways to do this, but I think the easiest way is create a UserScript loaded with GreaseMonkey or TamperMonkey. You may use [plurkcss.user.js](plurkcss.user.js) directly.
 
 Once you have finished and reloaded the settings page, you should see the fresh code editor sitting in there.
 

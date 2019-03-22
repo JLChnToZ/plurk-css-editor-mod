@@ -1,9 +1,8 @@
-'use strict';
 import { Ascii85 } from 'ascii85';
 import * as LZW from 'node-lzw';
 
-declare function escape(s:string): string;
-declare function unescape(s:string): string;
+declare function escape(s: string): string;
+declare function unescape(s: string): string;
 
 let token: number = 0;
 export function getToken(): number { return ++token; }

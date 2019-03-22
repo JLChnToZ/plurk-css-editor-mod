@@ -1,6 +1,6 @@
 {
   "name": "plurk-css-editor-mod",
-  "version": "0.1.0",
+  "version": "0.6.0",
   "description": "Bundled Monaco editor and LESS compiler for Plurk CSS integrated editor userscript",
   "main": "index.js",
   "scripts": {
@@ -10,27 +10,30 @@
   "author": "Jeremy Lam \"JLChnToZ\"",
   "license": "MIT",
   "devDependencies": {
-    "awesome-typescript-loader": "^3.4.0",
+    "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^2.1.1",
-    "http-server": "^0.10.0",
+    "http-server": "^0.11.1",
     "ignore-loader": "^0.1.2",
     "monaco-editor-webpack-plugin": "^1.7.0",
-    "prepack-webpack-plugin": "^1.1.0",
-    "source-map-loader": "^0.2.3",
+    "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
-    "typescript": "^2.6.1",
-    "webpack": "^3.8.1",
-    "worker-loader": "^1.1.0"
+    "typescript": "^3.3.4000",
+    "uglifyjs-webpack-plugin": "^2.1.2",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "worker-loader": "^2.0.0"
   },
   "dependencies": {
     "@types/less": "0.0.32",
     "ascii85": "^1.0.2",
-    "clean-css": "^4.1.9",
-    "less": "^2.7.3",
+    "clean-css": "^4.2.1",
+    "jsdom": "^14.0.0",
+    "less": "^3.9.0",
     "monaco-editor": "^0.16.2",
     "node-lzw": "^0.3.1",
-    "sass.js": "^0.10.7",
+    "sass.js": "^0.10.13",
     "source-map": "^0.7.3",
-    "typestyle": "^1.5.1"
+    "tslib": "^1.9.3",
+    "typestyle": "^2.0.1"
   }
 }
