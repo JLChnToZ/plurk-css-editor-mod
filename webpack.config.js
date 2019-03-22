@@ -1,8 +1,9 @@
 const webpack = require('webpack');
 const PrepackWebpackPlugin = require('prepack-webpack-plugin').default;
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.tsx',
+  entry: './src/index.ts',
   output: {
     filename: 'bundle.js',
     path: __dirname + '/dist'
@@ -19,7 +20,8 @@ module.exports = {
   module: {
     rules: [
       { test: /\.tsx?$/, loader: 'awesome-typescript-loader' },
-      { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
+      { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+      { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' },
     ]
   },
 
@@ -28,8 +30,11 @@ module.exports = {
   },
 
   plugins: [
+    new MonacoWebpackPlugin({
+      languages: ['css', 'less', 'scss'],
+    }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {

@@ -1,4 +1,5 @@
 'use strict';
+import * as monaco from 'monaco-editor';
 import { delay, getToken, saveEscape, saveUnescape } from './utils';
 const CompileWorker = require('worker-loader?inline=true&fallback=false!./converter.worker');
 
@@ -15,9 +16,9 @@ export class Converter {
       reject: (reason: any) => void
     }
   };
-  updateStatus: (modeChanged: boolean) => void;
-  updateCompiledData: (value: string) => void;
-  updateMarkers: (markers: monaco.editor.IMarkerData[]) => void;
+  updateStatus?: (modeChanged: boolean) => void;
+  updateCompiledData?: (value: string) => void;
+  updateMarkers?: (markers: monaco.editor.IMarkerData[]) => void;
 
   constructor(message: any) {
     this.worker = new CompileWorker();
@@ -34,7 +35,7 @@ export class Converter {
   setMode(newMode: string, value: string, forceChange: boolean = false) {
     if(this.mode === newMode) return;
     this.mode = newMode;
-    this.updateStatus(true);
+    this.updateStatus!(true);
     this.compile(value);
   }
 
@@ -58,8 +59,8 @@ export class Converter {
     let valueToProcess: string = '';
     try {
       this.isCompiling = true;
-      this.updateStatus(false);
-      this.updateMarkers([]);
+      this.updateStatus!(false);
+      this.updateMarkers!([]);
       // Wait until user is finish editing
       do {
         valueToProcess = this.newValue;
@@ -67,25 +68,25 @@ export class Converter {
       } while(valueToProcess !== this.newValue);
   
       if(!valueToProcess.replace(/^\s+|\s+$/g, '').length)
-        return this.updateCompiledData('');
+        return this.updateCompiledData!('');
   
       const footer = `\n\n/** ${this.message.srcwarn} **/\n/*${this.mode}.source::=lz85${saveEscape(valueToProcess, 1)}*/`;
-      this.updateCompiledData(footer);
+      this.updateCompiledData!(footer);
       const formatted: string = (await this.sendToWorker('compile', { mode: this.mode, content: valueToProcess }));
-      this.updateCompiledData(formatted + footer);
+      this.updateCompiledData!(formatted + footer);
     } catch(e) {
       console.error(e.stack || e);
       if(e.line) {
-        this.updateMarkers([{
+        this.updateMarkers!([{
           startColumn: e.column as number, endColumn: e.column as number,
           startLineNumber: e.line as number, endLineNumber: e.line as number,
           message: e.message as string,
-          severity: monaco.Severity.Error
+          severity: monaco.MarkerSeverity.Error
         }]);
       }
     } finally {
       this.isCompiling = false;
-      this.updateStatus(false);
+      this.updateStatus!(false);
     }
     if(this.newValue !== valueToProcess)
       this.delayCompile();

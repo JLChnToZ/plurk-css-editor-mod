@@ -3,6 +3,7 @@
 // Definitions by: Jeremy Lam "JLChnToZ" <https://github.com/jlchntoz>
 
 // This file only contains definitions for sass.sync.js, which is default entry point while loading sass.js with require().
+import * as sourceMap from 'source-map';
 
 declare namespace Sass {
   export enum style {

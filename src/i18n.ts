@@ -1,4 +1,8 @@
-export const messages: any = {
+export interface MessageList {
+  [key: string]: string;
+}
+
+export const messages: { [lang: string]: MessageList } = {
   'zh-Hant': {
     srcwarn: '警告！修改或刪除這個訊息後面的內容將會導致未經預處理的 CSS (LESS/SCSS) 原始碼損毀甚至丟失。',
     mode_scss: '切換至 SCSS 模式',

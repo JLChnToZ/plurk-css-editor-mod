@@ -11,28 +11,26 @@
   "license": "MIT",
   "devDependencies": {
     "awesome-typescript-loader": "^3.4.0",
+    "css-loader": "^2.1.1",
     "http-server": "^0.10.0",
     "ignore-loader": "^0.1.2",
+    "monaco-editor-webpack-plugin": "^1.7.0",
     "prepack-webpack-plugin": "^1.1.0",
     "source-map-loader": "^0.2.3",
+    "style-loader": "^0.23.1",
     "typescript": "^2.6.1",
     "webpack": "^3.8.1",
     "worker-loader": "^1.1.0"
   },
   "dependencies": {
     "@types/less": "0.0.32",
-    "@types/react": "^16.0.25",
-    "@types/react-dom": "^16.0.3",
-    "@types/react-monaco-editor": "^0.10.0",
-    "@types/source-map": "^0.5.2",
     "ascii85": "^1.0.2",
     "clean-css": "^4.1.9",
     "less": "^2.7.3",
+    "monaco-editor": "^0.16.2",
     "node-lzw": "^0.3.1",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
-    "react-monaco-editor": "^0.12.0",
     "sass.js": "^0.10.7",
+    "source-map": "^0.7.3",
     "typestyle": "^1.5.1"
   }
 }
