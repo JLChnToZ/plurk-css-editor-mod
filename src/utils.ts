@@ -1,5 +1,5 @@
 import { Ascii85 } from 'ascii85';
-import * as LZW from 'node-lzw';
+import LZW from 'node-lzw';
 
 declare function escape(s: string): string;
 declare function unescape(s: string): string;

@@ -1,4 +1,5 @@
-import { editor as MonacoEditor } from 'monaco-editor';
+import './monacoenv';
+import { editor as MonacoEditor } from 'monaco-editor/esm/vs/editor/editor.api';
 import { messages } from './i18n';
 import { Converter } from './converter';
 

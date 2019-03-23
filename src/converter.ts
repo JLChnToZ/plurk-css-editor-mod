@@ -1,6 +1,6 @@
 import { editor as MonacoEditor, MarkerSeverity } from 'monaco-editor';
 import { delay, getToken, saveEscape, saveUnescape } from './utils';
-const CompileWorker = require('worker-loader?inline=true&fallback=false!./converter.worker');
+import CompileWorker from 'worker-loader?inline=true!./converter.worker';
 
 export class Converter {
   message: any;
@@ -105,7 +105,7 @@ export class Converter {
     else handle.resolve(e.data.content);
     delete this.handles[e.data.token];
   }
-  
+
   updateStatus(_: boolean) {}
   updateCompiledData(_: string) {}
   updateMarkers(_: MonacoEditor.IMarkerData[]) {}

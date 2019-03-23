@@ -1,7 +1,7 @@
 import './worker-dom-shim';
-import * as less from 'less';
-import * as CleanCss from 'clean-css';
-import * as Sass from 'sass.js';
+import less from 'less';
+import CleanCss from 'clean-css';
+import Sass from 'sass.js';
 import { delayTimeout } from './promise-helper';
 
 declare const self: Worker;
