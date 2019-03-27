@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   entry: './src/index.ts',
@@ -15,7 +17,7 @@ module.exports = {
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: ['.ts', '.tsx', '.js', '.json'],
+    extensions: ['.ts', '.tsx', '.js', '.json', '.css'],
   },
 
   module: {
@@ -32,20 +34,32 @@ module.exports = {
 
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
+      new TerserWebpackPlugin({
         cache: true,
         parallel: true,
-        uglifyOptions: {
+        terserOptions: {
           compress: false,
           ecma: 6,
           mangle: true,
+          output: {
+            quote_style: 2,
+            max_line_len: 1024,
+          },
         },
         sourceMap: true,
-      })
+      }),
+      new OptimizeCssAssetsPlugin({
+        cssProcessorPluginOptions: {
+          preset: 'advanced',
+        },
+      }),
     ],
   },
 
   plugins: [
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['**/*', '!.gitkeep'],
+    }),
     new MonacoWebpackPlugin({
       languages: ['css', 'less', 'scss'],
     }),

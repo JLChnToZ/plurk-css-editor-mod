@@ -11,14 +11,16 @@
   "license": "MIT",
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.1",
+    "clean-webpack-plugin": "^2.0.1",
     "css-loader": "^2.1.1",
     "http-server": "^0.11.1",
     "ignore-loader": "^0.1.2",
     "monaco-editor-webpack-plugin": "^1.7.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
+    "terser-webpack-plugin": "^1.2.3",
     "typescript": "^3.3.4000",
-    "uglifyjs-webpack-plugin": "^2.1.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
     "worker-loader": "^2.0.0"
@@ -33,7 +35,6 @@
     "node-lzw": "^0.3.1",
     "sass.js": "^0.10.13",
     "source-map": "^0.7.3",
-    "tslib": "^1.9.3",
-    "typestyle": "^2.0.1"
+    "tslib": "^1.9.3"
   }
 }

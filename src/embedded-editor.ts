@@ -48,6 +48,17 @@ export class EmbeddedEditor {
       childList: true,
       subtree: true,
     });
+    if(document.readyState === 'complete')
+      this.onMutate();
+    else {
+      this.onReadyStateChange = this.onReadyStateChange.bind(this);
+      document.addEventListener('readystatechange', this.onReadyStateChange);
+    }
+  }
+
+  onReadyStateChange() {
+    if(document.readyState !== 'complete') return;
+    document.removeEventListener('readystatechange', this.onReadyStateChange);
     this.onMutate();
   }
 

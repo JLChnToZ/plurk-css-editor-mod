@@ -1,6 +1,6 @@
 import { editor as MonacoEditor, MarkerSeverity } from 'monaco-editor';
 import { delay, getToken, saveEscape, saveUnescape } from './utils';
-import CompileWorker from 'worker-loader?inline=true!./converter.worker';
+import CompileWorker from 'worker-loader?inline=true&fallback=false!./converter.worker';
 
 export class Converter {
   message: any;
