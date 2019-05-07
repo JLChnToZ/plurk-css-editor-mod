@@ -20,3 +20,18 @@
   background-color: rgba(255, 255, 255, 0.5);
   padding: 0.1em;
 }
+
+/* Reset */
+.form-control .monaco-editor .button,
+.form-control .monaco-editor button,
+.form-control .monaco-editor input,
+.form-control .monaco-editor select {
+  all: initial;
+}
+
+.form-control .textarea-holder .monaco-editor textarea.inputarea {
+  min-height: 0;
+  resize: none;
+  vertical-align: initial;
+  border-radius: initial;
+}
