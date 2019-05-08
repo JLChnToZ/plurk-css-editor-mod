@@ -26,7 +26,7 @@
 .form-control .monaco-editor button,
 .form-control .monaco-editor input,
 .form-control .monaco-editor select {
-  all: initial;
+  all: unset;
 }
 
 .form-control .textarea-holder .monaco-editor textarea.inputarea {
