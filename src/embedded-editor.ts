@@ -169,3 +169,4 @@ export class EmbeddedEditor {
       this.converter.setMode(lang, this.model.getValue());
   }
 }
+Object.assign(self, { EmbeddedEditor });
