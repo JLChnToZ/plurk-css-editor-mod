@@ -4,11 +4,6 @@ import LZW from 'node-lzw';
 declare function escape(s: string): string;
 declare function unescape(s: string): string;
 
-let token: number = 0;
-export function getToken(): number { return ++token; }
-
-export { delay, delayTimeout } from './promise-helper';
-
 const a85 = new Ascii85({
   table: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~'.split('')
 });

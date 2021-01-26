@@ -20,5 +20,5 @@
     return script;
   }
 
-  loadScript('https://moka-rin.moe/misc/plurkcss/main.fef48c0dee5900d99524.js');
+  loadScript('https://moka-rin.moe/misc/plurkcss/main.8b56321d115d612a1247.js');
 })();

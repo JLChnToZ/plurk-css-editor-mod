@@ -1,6 +1,6 @@
 {
   "name": "plurk-css-editor-mod",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Bundled Monaco editor and LESS compiler for Plurk CSS integrated editor userscript",
   "main": "index.js",
   "scripts": {
