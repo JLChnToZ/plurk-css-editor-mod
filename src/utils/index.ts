@@ -2,13 +2,6 @@ export type Collection<T> = ArrayLike<T> | Iterable<T>;
 
 export type Callback = (...args: any[]) => any;
 
-export const emptyArray = Object.freeze({
-  length: 0,
-  [Symbol.toStringTag]: 'EmptyArray',
-  next() { return { done: true } as IteratorReturnResult<any>; },
-  [Symbol.iterator]() { return this; },
-} as ArrayLike<any> & IterableIterator<any>);
-
 export interface Resolver<T> {
   resolve(value?: T | PromiseLike<T>): void;
   reject(reason?: any): void;

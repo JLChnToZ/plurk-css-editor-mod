@@ -9,25 +9,25 @@ interface CallbackQueue {
 
 export function delay(timeout: number): Promise<void>;
 export function delay<T>(timeout: number, value: T): Promise<T>;
-export function delay<T>(timeout: number, value?: T) {
-  return new Promise<T>(resolve => setTimeout(resolve, timeout, value));
+export function delay(timeout: number, value?: any) {
+  return new Promise(resolve => setTimeout(resolve, timeout, value));
 }
 
-export function delayTimeout(timeout: number): Promise<any>;
-export function delayTimeout<T>(timeout: number, reason?: any): Promise<T>;
 export function delayTimeout(timeout: number, reason?: any) {
-  return new Promise<any>((_, reject) => setTimeout(reject, timeout, reason));
+  return new Promise<never>((_, reject) => setTimeout(reject, timeout, reason));
 }
 
+export function defer<C extends Callback>(callback: C, thisArg: ThisParameterType<C>, args: Parameters<C>):
+  Promise<C extends (...args: any[]) => PromiseLike<infer T> ? T : ReturnType<C>>;
 export function defer(callback: Callback, thisArg: any, args: any[]) {
-  return new Promise<any>(r => r(Reflect.apply(callback, thisArg, args)));
+  return new Promise(resolve => resolve(Reflect.apply(callback, thisArg, args)));
 }
 
 let first: CallbackQueue | null | undefined;
 let last: CallbackQueue | null | undefined;
 let hasPending = false;
 
-export function deferTrigger(callback: Callback, thisArg: any, args: any[]) {
+export function deferTrigger<C extends Callback>(callback: C, thisArg: ThisParameterType<C>, args: Parameters<C>) {
   const current: CallbackQueue = { callback, thisArg, args };
   if (last == null)
     first = last = current;

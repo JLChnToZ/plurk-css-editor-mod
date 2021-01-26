@@ -19,7 +19,7 @@ async function compile(src: string, mode: string) {
     case 'less':
       const lessResult = await Promise.race([
         less.render(src),
-        delayTimeout<Less.RenderOutput>(5000, 'Less render timeout')
+        delayTimeout(5000, 'Less render timeout'),
       ]);
       rendered = lessResult.css;
       sourceMap = lessResult.map;
@@ -30,9 +30,9 @@ async function compile(src: string, mode: string) {
           Sass.options({ indentedSyntax: mode === 'sass' });
           Sass.compile(src, r => (r.status > 0 ? reject : resolve)(r));
         }),
-        delayTimeout<Sass.SassResponse>(5000, 'Sass compile timeout')
+        delayTimeout(5000, 'Sass compile timeout'),
       ]);
-      rendered = sassResult.text as string;
+      rendered = sassResult.text!;
       sourceMap = sassResult.map;
       break;
     default: rendered = src; break;
