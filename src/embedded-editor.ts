@@ -24,6 +24,8 @@ const overlayWidget: IDomOverlayWidget = {
   getPosition() { return { preference: 0 }; }
 };
 
+const darkThemeObserver = matchMedia('(prefers-color-scheme:dark)');
+
 export class EmbeddedEditor {
   query: string;
   originalEditor?: HTMLValueElement;
@@ -43,6 +45,7 @@ export class EmbeddedEditor {
     this.converter.updateStatus = this.onStatusUpdate.bind(this);
     this.onDidChangeContent = this.onDidChangeContent.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
+    this.onDarkTheme = this.onDarkTheme.bind(this);
     this.observer = new MutationObserver(this.onMutate.bind(this));
     this.observer.observe(document.body, {
       childList: true,
@@ -77,6 +80,10 @@ export class EmbeddedEditor {
     }
   }
 
+  onDarkTheme({ matches }: MediaQueryListEvent) {
+    this.editor?.updateOptions({ theme: matches ? 'vs-dark': 'vs' });
+  }
+
   onAppear(element: HTMLValueElement) {
     const root = element.parentElement!.insertBefore(
       document.createElement('div'),
@@ -88,7 +95,7 @@ export class EmbeddedEditor {
     this.editor = MonacoEditor.create(root, {
       language: 'less',
       value: this.value,
-      theme: 'vs',
+      theme: darkThemeObserver.matches ? 'vs-dark' : 'vs',
       selectOnLineNumbers: true,
       wordWrap: 'on',
       minimap: { enabled: true },
@@ -112,6 +119,7 @@ export class EmbeddedEditor {
       run: this.switchLanguage.bind(this, 'scss'),
     });
     this.reloadvalue();
+    darkThemeObserver.addEventListener('change', this.onDarkTheme);
   }
 
   reloadvalue() {
@@ -121,7 +129,9 @@ export class EmbeddedEditor {
 
   onDisappear() {
     if(!this.editor) return;
+    this.editor.getModel()?.dispose();
     this.editor.dispose();
+    darkThemeObserver.removeEventListener('change', this.onDarkTheme);
     delete this.model;
     delete this.editor;
   }
